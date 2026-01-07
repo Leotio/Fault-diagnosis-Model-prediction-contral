@@ -2,7 +2,7 @@ import numpy as np
 import cvxpy as cp
 import matplotlib.pyplot as plt
 from scipy.linalg import block_diag, solve_discrete_are
-import time  # 引入时间库
+import time 
 
 def get_msd_system(N_carts, dt=0.02):
     m, k_s, d_c = 1.0, 2.0, 1.5
@@ -26,7 +26,7 @@ def get_msd_system(N_carts, dt=0.02):
 def run_large_scale_carts(N_carts=50):
     print(f"\n--- 正在运行 4.2 节 (N_carts: {N_carts}, 状态维度: {2*N_carts}) ---")
     
-    # ------------------ 离线阶段 ------------------
+    # 离线阶段
     start_offline = time.time()
     Ad, Bd = get_msd_system(N_carts)
     n, m = Ad.shape[0], Bd.shape[1]
@@ -41,7 +41,6 @@ def run_large_scale_carts(N_carts=50):
     K = -np.linalg.inv(R + Bd.T @ P @ Bd) @ Bd.T @ P @ Ad
     M_u = np.linalg.pinv(Bd) @ (np.eye(n) - Ad)
     offline_time = time.time() - start_offline
-    # ----------------------------------------------
 
     # MPC 参数
     N, M_tilde = 5, 20
@@ -57,7 +56,7 @@ def run_large_scale_carts(N_carts=50):
     print(f"开始在线仿真 (阈值: 0.99)...")
     total_online_start = time.time()
     
-    while abs(avg_pos - 1.00) >= 0.01: # 增加安全上限防止死循环
+    while abs(avg_pos - 1.00) >= 0.01: 
         step_start = time.time()
         
         u_v = cp.Variable((m, N + M_tilde))
@@ -97,7 +96,7 @@ def run_large_scale_carts(N_carts=50):
 
     total_online_time = time.time() - total_online_start
 
-    # ------------------ 输出统计 ------------------
+    # 输出统计 
     print("\n" + "="*30)
     print(f"仿真完成统计 (N_carts = {N_carts})")
     print(f"离线设计总耗时: {offline_time:.4f} s")

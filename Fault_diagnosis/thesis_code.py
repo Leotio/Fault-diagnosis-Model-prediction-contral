@@ -4,9 +4,9 @@ from scipy.optimize import linprog
 from matplotlib.patches import Polygon
 from scipy.spatial import ConvexHull
 
-# ==========================================
+
 # 1. 核心类：Zonotope
-# ==========================================
+
 class Zonotope:
     def __init__(self, center, generators):
         self.center = np.array(center).reshape(-1, 1)
@@ -44,9 +44,7 @@ class Zonotope:
                       bounds=[(0, None)] + [(None, None)]*r, method='highs')
         return res.x[0] if res.success else 2.0
 
-# ==========================================
 # 2. 系统仿真环境
-# ==========================================
 class QuadTankSystem:
     def __init__(self):
         self.A = np.array([[0.9842, 0, 0.0419, 0], [0, 0.9890, 0, 0.0333],
@@ -58,9 +56,8 @@ class QuadTankSystem:
         self.G_mid = {0: np.eye(2), 1: np.diag([0.8, 1.0]), 2: np.diag([1.0, 0.85])}
         self.G_rad = {0: np.zeros((2,2)), 1: np.diag([0.05, 0]), 2: np.diag([0, 0.05])}
 
-# ==========================================
+
 # 3. 核心仿真与诊断逻辑
-# ==========================================
 def run_simulation(method='Proposed'):
     sys = QuadTankSystem()
     x_true = np.zeros((4, 1))
@@ -119,9 +116,7 @@ def run_simulation(method='Proposed'):
             
     return deltas, z_y_log, y_log
 
-# ==========================================
 # 4. 绘图与结果展示
-# ==========================================
 def draw_zono_robust(ax, z, color, label):
     G = z.generators[:2, :]
     c = z.center[:2, 0]
@@ -142,19 +137,19 @@ res_pr = run_simulation(method='Proposed')
 # 绘图逻辑
 fig = plt.figure(figsize=(14, 10))
 
-# 图 4/5: OES 变形示意
+# OES 变形示意
 ax1 = fig.add_subplot(221)
 draw_zono_robust(ax1, res_pr[1][0][6], 'red', 'Mode 0 OES (Inconsistent)')
 draw_zono_robust(ax1, res_pr[1][1][6], 'green', 'Mode 1 OES (True)')
 ax1.scatter(res_pr[2][6][0], res_pr[2][6][1], c='black', marker='*', s=150, label='System Output y(k)')
 ax1.set_title("Fig. 4/5: OES Deformation & Mode Exclusion (Step 6)"); ax1.legend()
 
-# 图 6: Xu (2021) 排除趋势
+# Xu (2021) 排除趋势
 ax2 = fig.add_subplot(223)
 for m in [0,1,2]: ax2.plot(res_xu[0][m], 'o-', label=f'Mode {m}')
 ax2.axhline(1.0, color='r', ls='--'); ax2.set_title("Fig. 6: Exclusion Tendency (AAFD Method)"); ax2.legend()
 
-# 图 7: Proposed 排除趋势
+# Proposed 排除趋势
 ax3 = fig.add_subplot(224)
 for m in [0,1,2]: ax3.plot(res_pr[0][m], 's-', label=f'Mode {m}')
 ax3.axhline(1.0, color='r', ls='--'); ax3.set_title("Fig. 7: Exclusion Tendency (Proposed Method)"); ax3.legend()

@@ -16,7 +16,7 @@ def get_lqr_gain(A, B, Q, R):
         return None, None
 
 def run_drone_example_final():
-    print("\n--- 正在运行 4.3 节 无人机示例 (最终稳定版) ---")
+    print("\n--- 正在运行 4.3 节 无人机示例 ---")
     
     # 定义 12 维状态: [x, vx, y, vy, z, vz, roll, d_roll, pitch, d_pitch, yaw, d_yaw]
     dt = 0.1
